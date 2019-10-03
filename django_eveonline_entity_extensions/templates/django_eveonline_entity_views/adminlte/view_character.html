@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+EVE Online - View Character
+{% endblock %}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    {% block header %}
+    Character
+    {% endblock %}
+
+    {% block description %}
+    {{character.name}}
+    {% endblock %}
+
+    <!-- Main content -->
+    {% block content %}
+    {% if form.errors %}
+    {% for field in form %}
+    {% for error in field.errors %}
+    <div class="wrap-input100 alert alert-danger m-b-10">
+        <span class="badge badge-secondary">{{field.label}}</span>
+        <strong>{{ error|escape }}</strong>
+    </div>
+    {% endfor %}
+    {% endfor %}
+    {% endif %}
+    <div class="row">
+        <div class="col-md-3">
+
+            <!-- Profile Image -->
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+                    <img class="profile-user-img img-responsive img-circle"
+                        src="https://imageserver.eveonline.com/Character/{{character.external_id}}_128.jpg"
+                        alt="User profile picture">
+                    <h3 class="profile-username text-center">{{character.name }}</h3>
+
+                    <h5 class="text-muted text-center">{{character.corporation}}</h5>
+                    <h6 class="text-muted text-center">{{character.corporation.alliance}}</h6>
+                    <br>
+
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <b>Skill Points</b>
+                            <p class="pull-right">
+                                {{character.skillpoints.value|intcomma}}
+                            </p>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Net Worth</b>
+                            <p class="pull-right">
+                                {{character.net_worth.value|intcomma}}
+                            </p>
+                        </li>
+                        {% if "django_discord_connector" in INSTALLED_APPS %}
+                        <li class="list-group-item">
+                            <b>Discord</b>
+                            {% if character.eve_token.user.discord_token %}
+                            <p class="pull-right">
+                                {{character.eve_token.user.discord_token.discord_user.nickname}}
+                            </p>
+                            {% else %}
+                            <p class="pull-right"><i>None</i></p>
+                            {% endif %}
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                    <a class="btn btn-success btn-block"
+                        href="'{% url 'django-eveonline-audit-refresh-character' character.external_id %}">Refresh Character</a>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+
+        <!-- /.col -->
+        <div class="col-md-9">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li id="assets"><a href="{% url 'django-eveonline-audit-view-character-assets' character.external_id %}">Assets</a></li>
+                    <li id="clones"><a href="{% url 'django-eveonline-audit-view-character-clones' character.external_id %}">Clones</a></li>
+                    <li id="contacts"><a href="{% url 'django-eveonline-audit-view-character-contacts' character.external_id %}">Contacts</a></li>
+                    <li><a href="#contracts">Contracts</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                    <li><a href="#journal">Journal</a></li>
+                    <li><a href="#transactions">Transactions</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active">
+                    {% block tab_content %}
+                    {% endblock %}
+                    </div>
+                </div>
+                <!-- /.tab-content -->
+                <!-- /.nav-tabs-custom -->
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    {% endblock %}
+    <!-- /.content -->
+</div>
