@@ -1,9 +1,9 @@
 from celery import shared_task 
 from django_eveonline_connector.models import EveCharacter, EveCorporation, EveAlliance 
-from django_eveonline_audit.models import EveAsset, EveClone, EveContact, EveContract, EveSkill, EveSkillPoints, EveNetWorth, EveJournalEntry, EveTransaction
-from django_eveonline_audit.queries.character.assets import get_eve_character_assets
-from django_eveonline_audit.queries.character.clones import get_eve_character_clones
-from django_eveonline_audit.queries.character.contacts import get_eve_character_contacts
+from django_eveonline_entity_extensions.models import EveAsset, EveClone, EveContact, EveContract, EveSkill, EveSkillPoints, EveNetWorth, EveJournalEntry, EveTransaction
+from django_eveonline_connector.services.esi.assets import get_eve_character_assets
+from django_eveonline_connector.services.esi.clones import get_eve_character_clones
+from django_eveonline_connector.services.esi.contacts import get_eve_character_contacts
 import logging
 
 logger = logging.getLogger(__name__)

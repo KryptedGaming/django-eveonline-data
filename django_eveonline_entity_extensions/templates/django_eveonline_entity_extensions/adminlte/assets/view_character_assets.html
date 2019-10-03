@@ -1,4 +1,4 @@
-{% extends "django_eveonline_audit/adminlte/view_character.html" %}
+{% extends "django_eveonline_entity_extensions/adminlte/view_character.html" %}
 
 {% block header %}
 Assets
@@ -33,7 +33,7 @@ $.fn.DataTable.ext.pager.numbers_length = 5;
             'pageLength': 5,
             "autoWidth": false,
             'serverSide': true,
-            "ajax": "{% url 'django-eveonline-audit-api-assets' %}?external_id={{character.external_id}}"
+            "ajax": "{% url 'django-eveonline-entity-extensions-api-assets' %}?external_id={{character.external_id}}"
         })
     })
 </script>

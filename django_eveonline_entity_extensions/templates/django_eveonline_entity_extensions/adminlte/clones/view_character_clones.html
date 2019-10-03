@@ -1,7 +1,7 @@
-{% extends "django_eveonline_audit/adminlte/view_character.html" %}
+{% extends "django_eveonline_entity_extensions/adminlte/view_character.html" %}
 
 {% block header %}
-Contacts
+Clones
 {% endblock %}
 
 {% block description %}
@@ -11,9 +11,8 @@ Contacts
 {% block tab_content %}
 <table class="datatable table table-bordered table-hover text-center">
     <thead>
-        <th class="col-lg-4 col-md-4 col-xs-2">Name</th>
-        <th class="col-lg-4 col-md-4 col-xs-2">Type</th>
-        <th class="col-lg-4 col-md-4 col-xs-2">Standing</th>
+        <th class="col-lg-4 col-md-4 col-xs-2">Location</th>
+        <th class="col-lg-4 col-md-4 col-xs-2">Implants</th>
     </thead>
     <tbody>
     </tbody>
@@ -33,13 +32,13 @@ $(function () {
         'pageLength': 5,
         "autoWidth": false,
         'serverSide': true,
-        "ajax": "{% url 'django-eveonline-audit-api-contacts' %}?external_id={{character.external_id}}"
+        "ajax": "{% url 'django-eveonline-entity-extensions-api-clones' %}?external_id={{character.external_id}}"
     })
 })
 </script>
 <script>
 $( document ).ready(function() {
-    $('#contacts').addClass('active');
+    $('#clones').addClass('active');
 });
 </script>
 

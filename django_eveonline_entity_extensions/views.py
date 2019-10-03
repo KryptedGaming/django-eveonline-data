@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_eveonline_connector.models import EveCharacter, EveEntity
-from django_eveonline_audit.models import EveAsset, EveClone, EveContact
+from django_eveonline_entity_extensions.models import EveAsset, EveClone, EveContact
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.utils.html import escape
 
@@ -11,7 +11,7 @@ from django.utils.html import escape
 def view_character(request, external_id):
     context = {}
     context['character'] = EveCharacter.objects.get(external_id=external_id)
-    return render(request, 'django_eveonline_audit/adminlte/view_character.html', context)
+    return render(request, 'django_eveonline_entity_extensions/adminlte/view_character.html', context)
 
 def refresh_character(request, external_id):
     pass 
@@ -20,7 +20,7 @@ def view_character_assets(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
         request,
-        'django_eveonline_audit/adminlte/assets/view_character_assets.html',
+        'django_eveonline_entity_extensions/adminlte/assets/view_character_assets.html',
         context = {
             'character': character,
         }
@@ -30,7 +30,7 @@ def view_character_clones(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
         request,
-        'django_eveonline_audit/adminlte/clones/view_character_clones.html',
+        'django_eveonline_entity_extensions/adminlte/clones/view_character_clones.html',
         context = {
             'character': character,
         }
@@ -40,7 +40,7 @@ def view_character_contacts(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
         request,
-        'django_eveonline_audit/adminlte/contacts/view_character_contacts.html',
+        'django_eveonline_entity_extensions/adminlte/contacts/view_character_contacts.html',
         context = {
             'character': character,
         }
