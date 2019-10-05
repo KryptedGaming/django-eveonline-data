@@ -33,5 +33,6 @@ setup(
     ],
     install_requires=[
         'django-eveonline-connector',
+        'django-datatables-view',
     ]
 )

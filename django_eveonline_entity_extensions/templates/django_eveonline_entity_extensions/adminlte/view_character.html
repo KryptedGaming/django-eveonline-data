@@ -72,7 +72,8 @@ EVE Online - View Character
                     </ul>
 
                     <a class="btn btn-success btn-block"
-                        href="'{% url 'django-eveonline-entity-extensions-refresh-character' character.external_id %}">Refresh Character</a>
+                        href="'{% url 'django-eveonline-entity-extensions-refresh-character' character.external_id %}">Refresh
+                        Character</a>
                 </div>
                 <!-- /.box-body -->
             </div>
@@ -84,18 +85,28 @@ EVE Online - View Character
         <div class="col-md-9">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
-                    <li id="assets"><a href="{% url 'django-eveonline-entity-extensions-view-character-assets' character.external_id %}">Assets</a></li>
-                    <li id="clones"><a href="{% url 'django-eveonline-entity-extensions-view-character-clones' character.external_id %}">Clones</a></li>
-                    <li id="contacts"><a href="{% url 'django-eveonline-entity-extensions-view-character-contacts' character.external_id %}">Contacts</a></li>
-                    <li><a href="#contracts">Contracts</a></li>
-                    <li><a href="#skills">Skills</a></li>
+                    <li id="assets"><a
+                            href="{% url 'django-eveonline-entity-extensions-view-character-assets' character.external_id %}">Assets</a>
+                    </li>
+                    <li id="clones"><a
+                            href="{% url 'django-eveonline-entity-extensions-view-character-clones' character.external_id %}">Clones</a>
+                    </li>
+                    <li id="contacts"><a
+                            href="{% url 'django-eveonline-entity-extensions-view-character-contacts' character.external_id %}">Contacts</a>
+                    </li>
+                    <li id="contracts"><a
+                            href="{% url 'django-eveonline-entity-extensions-view-character-contracts' character.external_id %}">Contracts</a>
+                    </li>
+                    <li id="skills"><a
+                            href="{% url 'django-eveonline-entity-extensions-view-character-skills' character.external_id %}">Skills</a>
+                    </li>
                     <li><a href="#journal">Journal</a></li>
                     <li><a href="#transactions">Transactions</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active">
-                    {% block tab_content %}
-                    {% endblock %}
+                        {% block tab_content %}
+                        {% endblock %}
                     </div>
                 </div>
                 <!-- /.tab-content -->

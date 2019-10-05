@@ -1,6 +1,7 @@
 from django.db import models
 from django_eveonline_connector.models import EveEntity
 
+
 class EveAsset(models.Model):
     item = models.CharField(max_length=64)
     item_type = models.CharField(max_length=32)
@@ -45,12 +46,13 @@ class EveContract(models.Model):
     external_id = models.IntegerField()
 
     issued_by = models.CharField(max_length=128)
-    issued_to = models.CharField(max_length=128)
+    issued_to = models.CharField(max_length=128, null=True)
     issued_by_type = models.CharField(max_length=32, choices=contract_id_types)
-    issued_to_type = models.CharField(max_length=32, choices=contract_id_types, null=True)
+    issued_to_type = models.CharField(
+        max_length=32, choices=contract_id_types, null=True)
     accepted_by = models.CharField(max_length=128, null=True)
-    accepted_by_type = models.CharField(max_length=32, choices=contract_id_types, null=True)
-    
+    accepted_by_type = models.CharField(
+        max_length=32, choices=contract_id_types, null=True)
 
     contract_type = models.CharField(max_length=32)
     contract_status = models.CharField(max_length=64)
@@ -65,12 +67,13 @@ class EveContract(models.Model):
 
 class EveSkill(models.Model):
     name = models.CharField(max_length=64)
+    group = models.CharField(max_length=64)
     level = models.IntegerField()
     entity = models.ForeignKey(
         EveEntity, on_delete=models.CASCADE, related_name="skills")
 
     class Meta:
-        unique_together = ('entity', 'name')
+        unique_together = ['entity', 'name']
 
 
 class EveSkillPoints(models.Model):
@@ -83,7 +86,6 @@ class EveNetWorth(models.Model):
     value = models.FloatField()
     entity = models.OneToOneField(
         EveEntity, on_delete=models.CASCADE, related_name="net_worth")
-
 
 
 class EveJournalEntry(models.Model):
