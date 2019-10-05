@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_eveonline_connector.models import EveCharacter, EveEntity
-from django_eveonline_entity_extensions.models import EveAsset, EveClone, EveContact, EveContract, EveSkill
+from django_eveonline_entity_extensions.models import EveAsset, EveClone, EveContact, EveContract, EveSkill, EveJournalEntry
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.utils.html import escape
 
@@ -80,6 +80,16 @@ def view_character_skills(request, external_id):
     )
 
 
+def view_character_journal(request, external_id):
+    character = EveCharacter.objects.get(external_id=external_id)
+    return render(
+        request,
+        'django_eveonline_entity_extensions/adminlte/journal/view_character_journal.html',
+        context={
+            'character': character,
+        }
+    )
+
 # Corporation Views
 
 
@@ -129,6 +139,14 @@ def get_contracts(request):
     if not EveEntity.objects.filter(external_id=request.GET.get('external_id')):
         return HttpResponse(status=404)
     return ContractJson.as_view()(request)
+
+
+def get_journal(request):
+    if 'external_id' not in request.GET:
+        return HttpResponse(status=400)
+    if not EveEntity.objects.filter(external_id=request.GET.get('external_id')):
+        return HttpResponse(status=404)
+    return JournalJson.as_view()(request)
 
 
 # JSON Class Views
@@ -273,4 +291,67 @@ class ContractJson(BaseDatatableView):
                 to_who,
                 actions
             ])
+        return json_data
+
+
+class JournalJson(BaseDatatableView):
+    model = EveJournalEntry
+    columns = ['date', 'type', 'first_party', 'second_party', 'value']
+    order_columns = ['date', 'type', 'first_party', 'second_party', 'value']
+
+    def filter_queryset(self, qs):
+        # implement searching
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(Q(type__istartswith=search) |
+                           Q(first_party__istartswith=search) |
+                           Q(second_party__istartswith=search))
+
+        # return character
+        external_id = self.request.GET.get('external_id')
+        return qs.filter(Q(entity__external_id=external_id))
+
+    def prepare_results(self, qs):
+        json_data = []
+        # resolve custom template responses
+        for entry in qs:
+            first_party_ext = "jpg"
+            second_party_ext = "jpg"
+            if entry.first_party_type == "CORPORATION":
+                first_party_ext = "png"
+            if entry.second_party_type == "CORPORATION":
+                second_party_ext = "png"
+            # add avatars for first party field
+            if entry.first_party_type == "CORPORATION" or entry.first_party_type == "CHARACTER":
+                entry_first_party = """
+                <img width="32px" src="https://imageserver.eveonline.com/%s/%s_64.%s" class="img-circle img-bordered-sm" alt="Avatar">
+                %s 
+                """ % (entry.first_party_type.title(), entry.first_party_id, first_party_ext, entry.first_party)
+            else:
+                entry_first_party = entry.type
+            # add avatars for second party field
+            if entry.second_party_type == "CORPORATION" or entry.second_party_type == "CHARACTER":
+                entry_second_party = """
+                <img width="32px" src="https://imageserver.eveonline.com/%s/%s_64.%s" class="img-circle img-bordered-sm" alt="Avatar">
+                %s 
+                """ % (entry.second_party_type.title(), entry.second_party_id, second_party_ext, entry.second_party)
+            else:
+                entry.second_party = entry.type
+            # clean up value html
+            if entry.value < 0:
+                amount_color = "red"
+            else:
+                amount_color = "green"
+            entry_amount = """
+                <p><span style="color: %s">%s</span></p>
+            """ % (amount_color, f'{entry.value:,}')
+
+            json_data.append([
+                entry.date.strftime("%m-%d-%Y"),
+                entry.type.title(),
+                entry_first_party,
+                entry_second_party,
+                entry_amount,
+            ])
+
         return json_data

@@ -7,6 +7,7 @@ from django_eveonline_connector.services.esi.clones import get_eve_character_clo
 from django_eveonline_connector.services.esi.contacts import get_eve_character_contacts
 from django_eveonline_connector.services.esi.contracts import get_eve_character_contracts
 from django_eveonline_connector.services.esi.skills import get_eve_character_skills
+from django_eveonline_connector.services.esi.journal import get_eve_character_journal
 import logging
 
 logger = logging.getLogger(__name__)
@@ -119,8 +120,29 @@ def update_character_skills(character_id):
     logger.info("Successfully updated skills for %s" % character_id)
 
 
-def update_character_journal():
-    pass
+def update_character_journal(character_id):
+    logger.info("Updating journal entries for %s" % character_id)
+    entity = EveCharacter.objects.get(external_id=character_id)
+    # Get existing journal IDs
+    existing_journal_entries = [
+        entry.external_id for entry in EveJournalEntry.objects.filter(entity=entity)]
+    journal = get_eve_character_journal(
+        character_id, ignore_ids=existing_journal_entries)
+    for entry in journal:
+        EveJournalEntry(
+            external_id=entry['id'],
+            value=entry['amount'],
+            type=entry['ref_type'].replace("_", " ").upper(),
+            date=parse_datetime(entry['date'].to_json()),
+            first_party=entry['first_party_name'],
+            first_party_id=entry['first_party_id'],
+            first_party_type=entry['first_party_type'],
+            second_party=entry['second_party_name'],
+            second_party_id=entry['second_party_id'],
+            second_party_type=entry['second_party_type'],
+            entity=entity
+        ).save()
+    logger.info("Successfully updated journal entries for %s" % entity.name)
 
 
 def update_character_transactions():

@@ -93,14 +93,20 @@ class EveJournalEntry(models.Model):
         ("CHARACTER", "CHARACTER"),
         ("CORPORATION", "CORPORATION")
     )
+    external_id = models.IntegerField()
+    type = models.CharField(max_length=128)
     value = models.FloatField()
     date = models.DateField()
     first_party = models.CharField(max_length=128)
+    first_party_id = models.IntegerField()
     first_party_type = models.CharField(
         max_length=32, choices=party_type_choices)
     second_party = models.CharField(max_length=128)
+    second_party_id = models.IntegerField()
     second_party_type = models.CharField(
         max_length=32, choices=party_type_choices)
+    entity = models.ForeignKey(
+        EveEntity, on_delete=models.CASCADE, related_name="journal")
 
 
 class EveTransaction(models.Model):

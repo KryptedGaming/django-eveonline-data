@@ -100,7 +100,9 @@ EVE Online - View Character
                     <li id="skills"><a
                             href="{% url 'django-eveonline-entity-extensions-view-character-skills' character.external_id %}">Skills</a>
                     </li>
-                    <li><a href="#journal">Journal</a></li>
+                    <li id="journal"><a
+                            href="{% url 'django-eveonline-entity-extensions-view-character-journal' character.external_id %}">Journal</a>
+                    </li>
                     <li><a href="#transactions">Transactions</a></li>
                 </ul>
                 <div class="tab-content">

@@ -22,6 +22,8 @@ urlpatterns = [
          name="django-eveonline-entity-extensions-view-character-contracts"),
     path('character/view/<int:external_id>/skills/', views.view_character_skills,
          name="django-eveonline-entity-extensions-view-character-skills"),
+    path('character/view/<int:external_id>/journal/', views.view_character_journal,
+         name="django-eveonline-entity-extensions-view-character-journal"),
 ]
 
 # JSON
@@ -34,4 +36,6 @@ urlpatterns += [
          name="django-eveonline-entity-extensions-api-contacts"),
     path('api/contracts/', views.get_contracts,
          name="django-eveonline-entity-extensions-api-contracts"),
+    path('api/journal/', views.get_journal,
+         name="django-eveonline-entity-extensions-api-journal"),
 ]
