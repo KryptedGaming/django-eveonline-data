@@ -103,7 +103,7 @@ EVE Online - View Character
                     <li id="journal"><a
                             href="{% url 'django-eveonline-entity-extensions-view-character-journal' character.external_id %}">Journal</a>
                     </li>
-                    <li><a href="#transactions">Transactions</a></li>
+                    <li id="transactions"><a href="{% url 'django-eveonline-entity-extensions-view-character-transactions' character.external_id %}">Transactions</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active">

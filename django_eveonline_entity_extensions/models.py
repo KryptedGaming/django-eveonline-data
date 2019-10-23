@@ -110,10 +110,13 @@ class EveJournalEntry(models.Model):
 
 
 class EveTransaction(models.Model):
-    value = models.FloatField()
+    external_id=models.IntegerField()
     item = models.CharField(max_length=64)
+    client = models.CharField(max_length=128)
+    client_id = models.IntegerField()
+    client_type = models.CharField(max_length=32)
     quantity = models.IntegerField()
     is_buy = models.BooleanField()
-    client_id = models.IntegerField()
+    value = models.FloatField()
     entity = models.ForeignKey(
         EveEntity, on_delete=models.CASCADE, related_name="transactions")

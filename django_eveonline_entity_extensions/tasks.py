@@ -8,6 +8,7 @@ from django_eveonline_connector.services.esi.contacts import get_eve_character_c
 from django_eveonline_connector.services.esi.contracts import get_eve_character_contracts
 from django_eveonline_connector.services.esi.skills import get_eve_character_skills
 from django_eveonline_connector.services.esi.journal import get_eve_character_journal
+from django_eveonline_connector.services.esi.transactions import get_eve_character_transactions
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,6 @@ logger = logging.getLogger(__name__)
 Global Tasks
 These tasks are what users register to maintain up-to-date audit information.
 """
-
 
 @shared_task
 def update_eve_characters_data():
@@ -29,16 +29,15 @@ def update_eve_corporations_data():
 
 
 @shared_task
-def update_eve_alliances_data():
-    pass
-
+def update_eve_character_data(character_id):
+    pass 
 
 """
 EveCharacter Tasks 
 The tasks are used to update backend models related to EveCharacter objects
 """
 
-
+@shared_task
 def update_character_assets(character_id):
     assets = get_eve_character_assets(character_id)
     # TODO: don't lazy delete
@@ -51,7 +50,7 @@ def update_character_assets(character_id):
             entity=EveCharacter.objects.get(external_id=character_id)
         ).save()
 
-
+@shared_task
 def update_character_clones(character_id):
     clones = get_eve_character_clones(character_id)
     # TODO: don't lazy delete
@@ -63,7 +62,7 @@ def update_character_clones(character_id):
             entity=EveCharacter.objects.get(external_id=character_id)
         ).save()
 
-
+@shared_task
 def update_character_contacts(character_id):
     logger.info("Updating contacts for %s" % character_id)
     contacts = get_eve_character_contacts(character_id)
@@ -78,7 +77,7 @@ def update_character_contacts(character_id):
             standing=contact['standing']
         ).save()
 
-
+@shared_task
 def update_character_contracts(character_id):
     logger.info("Updating contracts for %s" % character_id)
     contracts = get_eve_character_contracts(character_id)
@@ -103,7 +102,7 @@ def update_character_contracts(character_id):
         ).save()
     logger.info("Successfully updated contracts for %s" % character_id)
 
-
+@shared_task
 def update_character_skills(character_id):
     logger.info("Updating skills for %s" % character_id)
     skills = get_eve_character_skills(character_id)
@@ -119,7 +118,7 @@ def update_character_skills(character_id):
         ).save()
     logger.info("Successfully updated skills for %s" % character_id)
 
-
+@shared_task
 def update_character_journal(character_id):
     logger.info("Updating journal entries for %s" % character_id)
     entity = EveCharacter.objects.get(external_id=character_id)
@@ -144,6 +143,26 @@ def update_character_journal(character_id):
         ).save()
     logger.info("Successfully updated journal entries for %s" % entity.name)
 
+@shared_task
+def update_character_transactions(character_id):
+    logger.info("Updating transactions for %s" % character_id)
+    entity = EveCharacter.objects.get(external_id=character_id)
+    # get existing transaction ids 
+    existing_transaction_ids = [
+        transaction.external_id for transaction in EveTransaction.objects.filter(entity=entity)
+    ]
+    transactions = get_eve_character_transactions(character_id, ignore_ids=existing_transaction_ids)
 
-def update_character_transactions():
-    pass
+    for transaction in transactions:
+        logger.debug(transaction)
+        EveTransaction(
+            item=transaction['type_name'],
+            client=transaction['client'],
+            client_id=transaction['client_id'],
+            client_type=transaction['client_type'],
+            external_id=transaction['transaction_id'],
+            quantity=transaction['quantity'],
+            is_buy=transaction['is_buy'], 
+            value=transaction['quantity']*transaction['unit_price'],
+            entity=entity,  
+        ).save()

@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_eveonline_connector.models import EveCharacter, EveEntity
-from django_eveonline_entity_extensions.models import EveAsset, EveClone, EveContact, EveContract, EveSkill, EveJournalEntry
+from django_eveonline_entity_extensions.models import EveAsset, EveClone, EveContact, EveContract, EveSkill, EveJournalEntry, EveTransaction
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.utils.html import escape
 
@@ -90,6 +90,16 @@ def view_character_journal(request, external_id):
         }
     )
 
+def view_character_transactions(request, external_id):
+    character = EveCharacter.objects.get(external_id=external_id)
+    return render(
+        request,
+        'django_eveonline_entity_extensions/adminlte/transactions/view_character_transactions.html',
+        context={
+            'character': character,
+        }
+    )
+
 # Corporation Views
 
 
@@ -107,8 +117,6 @@ def view_alliance(request, external_id):
     pass
 
 # JSON Responses
-
-
 def get_assets(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
@@ -147,6 +155,13 @@ def get_journal(request):
     if not EveEntity.objects.filter(external_id=request.GET.get('external_id')):
         return HttpResponse(status=404)
     return JournalJson.as_view()(request)
+
+def get_transactions(request):
+    if 'external_id' not in request.GET:
+        return HttpResponse(status=400)
+    if not EveEntity.objects.filter(external_id=request.GET.get('external_id')):
+        return HttpResponse(status=404)
+    return TransactionJson.as_view()(request)
 
 
 # JSON Class Views
@@ -352,6 +367,56 @@ class JournalJson(BaseDatatableView):
                 entry_first_party,
                 entry_second_party,
                 entry_amount,
+            ])
+
+        return json_data
+
+class TransactionJson(BaseDatatableView):
+    model = EveTransaction
+    columns = ['client', 'item', 'quantity', 'value']
+    order_columns = ['client', 'item', 'quantity', 'value']
+
+    def filter_queryset(self, qs):
+        # implement searching
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(Q(item__istartswith=search) |
+                           Q(client__istartswith=search)
+                           )
+
+        # return character
+        external_id = self.request.GET.get('external_id')
+        return qs.filter(Q(entity__external_id=external_id))
+
+    def prepare_results(self, qs):
+        json_data = []
+        # resolve custom template responses
+        for transaction in qs:
+            client_ext = "jpg"
+            if transaction.client_type == "CORPORATION":
+                client_ext = "png"
+            # add avatars for client
+            if transaction.client_type.upper() == "CORPORATION" or transaction.client_type.upper() == "CHARACTER":
+                transaction_client = """
+                <img width="32px" src="https://imageserver.eveonline.com/%s/%s_64.%s" class="img-circle img-bordered-sm" alt="Avatar">
+                %s 
+                """ % (transaction.client_type.title(), transaction.client_id, client_ext, transaction.client)
+            else:
+                transaction_client = transaction.client_type
+            # clean up value html
+            if transaction.is_buy:
+                amount_color = "red"
+            else:
+                amount_color = "green"
+            transaction_amount = """
+                <p><span style="color: %s">%s</span></p>
+            """ % (amount_color, f'{transaction.value:,}')
+
+            json_data.append([
+                transaction_client, 
+                transaction.item,
+                transaction.quantity,
+                transaction_amount,
             ])
 
         return json_data
