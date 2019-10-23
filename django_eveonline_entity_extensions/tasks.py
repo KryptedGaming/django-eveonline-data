@@ -19,26 +19,95 @@ These tasks are what users register to maintain up-to-date audit information.
 """
 
 @shared_task
-def update_eve_characters_data():
-    pass
-
+def update_all_eve_characters_assets(corporation_id=None, alliance_id=None):
+    if corporation_id:
+        characters = EveCharacter.objects.filter(corporation__external_id=corporation_id).exclude(token=None)
+    elif alliance_id:
+        characters = EveCharacter.objects.filter(corporation__alliance__external_id=alliance_id).exclude(token=None)
+    else:
+        characters = EveCharacter.objects.all().exclude(token=None)
+    
+    for character in characters:
+        update_eve_character_assets.apply_async(args=[character.external_id])
 
 @shared_task
-def update_eve_corporations_data():
-    pass
-
+def update_all_eve_characters_clones(corporation_id=None, alliance_id=None):
+    if corporation_id:
+        characters = EveCharacter.objects.filter(corporation__external_id=corporation_id).exclude(token=None)
+    elif alliance_id:
+        characters = EveCharacter.objects.filter(corporation__alliance__external_id=alliance_id).exclude(token=None)
+    else:
+        characters = EveCharacter.objects.all().exclude(token=None)
+    
+    for character in characters:
+        update_eve_character_clones.apply_async(args=[character.external_id])
 
 @shared_task
-def update_eve_character_data(character_id):
-    pass 
+def update_all_eve_characters_contacts(corporation_id=None, alliance_id=None):
+    if corporation_id:
+        characters = EveCharacter.objects.filter(corporation__external_id=corporation_id).exclude(token=None)
+    elif alliance_id:
+        characters = EveCharacter.objects.filter(corporation__alliance__external_id=alliance_id).exclude(token=None)
+    else:
+        characters = EveCharacter.objects.all().exclude(token=None)
+    
+    for character in characters:
+        update_eve_character_contacts.apply_async(args=[character.external_id])
+
+@shared_task
+def update_all_eve_characters_contracts(corporation_id=None, alliance_id=None):
+    if corporation_id:
+        characters = EveCharacter.objects.filter(corporation__external_id=corporation_id).exclude(token=None)
+    elif alliance_id:
+        characters = EveCharacter.objects.filter(corporation__alliance__external_id=alliance_id).exclude(token=None)
+    else:
+        characters = EveCharacter.objects.all().exclude(token=None)
+    
+    for character in characters:
+        update_eve_character_contracts.apply_async(args=[character.external_id])
+
+@shared_task
+def update_all_eve_characters_journals(corporation_id=None, alliance_id=None):
+    if corporation_id:
+        characters = EveCharacter.objects.filter(corporation__external_id=corporation_id).exclude(token=None)
+    elif alliance_id:
+        characters = EveCharacter.objects.filter(corporation__alliance__external_id=alliance_id).exclude(token=None)
+    else:
+        characters = EveCharacter.objects.all().exclude(token=None)
+    
+    for character in characters:
+        update_eve_character_journals.apply_async(args=[character.external_id])
+
+@shared_task
+def update_all_eve_characters_skills(corporation_id=None, alliance_id=None):
+    if corporation_id:
+        characters = EveCharacter.objects.filter(corporation__external_id=corporation_id).exclude(token=None)
+    elif alliance_id:
+        characters = EveCharacter.objects.filter(corporation__alliance__external_id=alliance_id).exclude(token=None)
+    else:
+        characters = EveCharacter.objects.all().exclude(token=None)
+    
+    for character in characters:
+        update_eve_character_skills.apply_async(args=[character.external_id])
+
+@shared_task
+def update_all_eve_characters_transactions(corporation_id=None, alliance_id=None):
+    if corporation_id:
+        characters = EveCharacter.objects.filter(corporation__external_id=corporation_id).exclude(token=None)
+    elif alliance_id:
+        characters = EveCharacter.objects.filter(corporation__alliance__external_id=alliance_id).exclude(token=None)
+    else:
+        characters = EveCharacter.objects.all().exclude(token=None)
+    
+    for character in characters:
+        update_eve_character_transactions.apply_async(args=[character.external_id])
 
 """
 EveCharacter Tasks 
 The tasks are used to update backend models related to EveCharacter objects
 """
-
 @shared_task
-def update_character_assets(character_id):
+def update_eve_character_assets(character_id):
     assets = get_eve_character_assets(character_id)
     # TODO: don't lazy delete
     EveAsset.objects.filter(entity__external_id=character_id).delete()
@@ -51,7 +120,7 @@ def update_character_assets(character_id):
         ).save()
 
 @shared_task
-def update_character_clones(character_id):
+def update_eve_character_clones(character_id):
     clones = get_eve_character_clones(character_id)
     # TODO: don't lazy delete
     EveClone.objects.filter(entity__external_id=character_id).delete()
@@ -63,7 +132,7 @@ def update_character_clones(character_id):
         ).save()
 
 @shared_task
-def update_character_contacts(character_id):
+def update_eve_character_contacts(character_id):
     logger.info("Updating contacts for %s" % character_id)
     contacts = get_eve_character_contacts(character_id)
     # TODO: don't lazy delete
@@ -78,7 +147,7 @@ def update_character_contacts(character_id):
         ).save()
 
 @shared_task
-def update_character_contracts(character_id):
+def update_eve_character_contracts(character_id):
     logger.info("Updating contracts for %s" % character_id)
     contracts = get_eve_character_contracts(character_id)
     # TODO: don't lazy delete
@@ -103,7 +172,7 @@ def update_character_contracts(character_id):
     logger.info("Successfully updated contracts for %s" % character_id)
 
 @shared_task
-def update_character_skills(character_id):
+def update_eve_character_skills(character_id):
     logger.info("Updating skills for %s" % character_id)
     skills = get_eve_character_skills(character_id)
     # TODO: don't lazy delete
@@ -119,7 +188,7 @@ def update_character_skills(character_id):
     logger.info("Successfully updated skills for %s" % character_id)
 
 @shared_task
-def update_character_journal(character_id):
+def update_eve_character_journal(character_id):
     logger.info("Updating journal entries for %s" % character_id)
     entity = EveCharacter.objects.get(external_id=character_id)
     # Get existing journal IDs
@@ -144,7 +213,7 @@ def update_character_journal(character_id):
     logger.info("Successfully updated journal entries for %s" % entity.name)
 
 @shared_task
-def update_character_transactions(character_id):
+def update_eve_character_transactions(character_id):
     logger.info("Updating transactions for %s" % character_id)
     entity = EveCharacter.objects.get(external_id=character_id)
     # get existing transaction ids 
