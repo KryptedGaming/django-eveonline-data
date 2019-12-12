@@ -60,9 +60,9 @@ EVE Online - View Character
                         {% if "django_discord_connector" in INSTALLED_APPS %}
                         <li class="list-group-item">
                             <b>Discord</b>
-                            {% if character.eve_token.user.discord_token %}
+                            {% if character.token.user.discord_token %}
                             <p class="pull-right">
-                                {{character.eve_token.user.discord_token.discord_user.nickname}}
+                                {{character.token.user.discord_token.discord_user}}
                             </p>
                             {% else %}
                             <p class="pull-right"><i>None</i></p>
@@ -72,7 +72,7 @@ EVE Online - View Character
                     </ul>
 
                     <a class="btn btn-success btn-block"
-                        href="'{% url 'django-eveonline-entity-extensions-refresh-character' character.external_id %}">Refresh
+                        href="{% url 'django-eveonline-entity-extensions-refresh-character' character.external_id %}">Refresh
                         Character</a>
                 </div>
                 <!-- /.box-body -->

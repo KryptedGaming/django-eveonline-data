@@ -77,13 +77,13 @@ class EveSkill(models.Model):
 
 
 class EveSkillPoints(models.Model):
-    value = models.IntegerField()
+    value = models.IntegerField(null=True)
     entity = models.OneToOneField(
         EveEntity, on_delete=models.CASCADE, related_name="skillpoints")
 
 
 class EveNetWorth(models.Model):
-    value = models.FloatField()
+    value = models.FloatField(null=True)
     entity = models.OneToOneField(
         EveEntity, on_delete=models.CASCADE, related_name="net_worth")
 

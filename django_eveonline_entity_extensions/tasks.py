@@ -9,6 +9,7 @@ from django_eveonline_connector.services.esi.contracts import get_eve_character_
 from django_eveonline_connector.services.esi.skills import get_eve_character_skills
 from django_eveonline_connector.services.esi.journal import get_eve_character_journal
 from django_eveonline_connector.services.esi.transactions import get_eve_character_transactions
+from django_eveonline_connector.services.esi.character import get_eve_character_skillpoints, get_eve_character_net_worth
 import logging
 
 logger = logging.getLogger(__name__)
@@ -107,6 +108,16 @@ EveCharacter Tasks
 The tasks are used to update backend models related to EveCharacter objects
 """
 @shared_task
+def update_eve_character_all(character_id):
+    update_eve_character_assets.apply_async(args=[character_id])
+    update_eve_character_clones.apply_async(args=[character_id])
+    update_eve_character_contacts.apply_async(args=[character_id])
+    update_eve_character_contracts.apply_async(args=[character_id])
+    update_eve_character_journal.apply_async(args=[character_id])
+    update_eve_character_skills.apply_async(args=[character_id])
+    update_eve_character_transactions.apply_async(args=[character_id])
+
+@shared_task
 def update_eve_character_assets(character_id):
     assets = get_eve_character_assets(character_id)
     # TODO: don't lazy delete
@@ -175,6 +186,7 @@ def update_eve_character_contracts(character_id):
 def update_eve_character_skills(character_id):
     logger.info("Updating skills for %s" % character_id)
     skills = get_eve_character_skills(character_id)
+    entity = EveCharacter.objects.get(external_id=character_id)
     # TODO: don't lazy delete
     logger.info("Deleting existing skills for %s" % character_id)
     EveSkill.objects.filter(entity__external_id=character_id).delete()
@@ -186,6 +198,11 @@ def update_eve_character_skills(character_id):
             entity=EveCharacter.objects.get(external_id=character_id)
         ).save()
     logger.info("Successfully updated skills for %s" % character_id)
+    skill_points = get_eve_character_skillpoints(character_id)
+    eve_skill_points = EveSkillPoints.objects.get_or_create(entity=entity)[0]
+    eve_skill_points.value = skill_points
+    eve_skill_points.save()
+    logger.info("Successfully updated skillpoints for %s" % character_id)
 
 @shared_task
 def update_eve_character_journal(character_id):
@@ -211,6 +228,11 @@ def update_eve_character_journal(character_id):
             entity=entity
         ).save()
     logger.info("Successfully updated journal entries for %s" % entity.name)
+    net_worth = get_eve_character_net_worth(character_id)
+    eve_net_worth = EveNetWorth.objects.get_or_create(entity=entity)[0]
+    eve_net_worth.value = net_worth
+    eve_net_worth.save()
+    logger.info("Successfully updated net worth for %s" % entity.name)
 
 @shared_task
 def update_eve_character_transactions(character_id):

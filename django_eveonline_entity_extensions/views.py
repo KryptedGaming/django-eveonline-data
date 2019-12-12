@@ -1,10 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.contrib import messages
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_eveonline_connector.models import EveCharacter, EveEntity
 from django_eveonline_entity_extensions.models import EveAsset, EveClone, EveContact, EveContract, EveSkill, EveJournalEntry, EveTransaction
 from django_datatables_view.base_datatable_view import BaseDatatableView
+from .tasks import update_eve_character_all
 from django.utils.html import escape
 
 # Character Views
@@ -17,7 +19,12 @@ def view_character(request, external_id):
 
 
 def refresh_character(request, external_id):
-    pass
+    try:
+        update_eve_character_all(external_id)
+        messages.success(request, "Character successfully updated")
+    except Exception as e:
+        messages.error(request, "Character was not updated: %s" % e)
+    return redirect('django-eveonline-entity-extensions-view-character', external_id)
 
 
 def view_character_assets(request, external_id):
