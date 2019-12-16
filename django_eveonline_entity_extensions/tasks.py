@@ -77,7 +77,7 @@ def update_all_eve_characters_journals(corporation_id=None, alliance_id=None):
         characters = EveCharacter.objects.all().exclude(token=None)
     
     for character in characters:
-        update_eve_character_journals.apply_async(args=[character.external_id])
+        update_eve_character_journal.apply_async(args=[character.external_id])
 
 @shared_task
 def update_all_eve_characters_skills(corporation_id=None, alliance_id=None):

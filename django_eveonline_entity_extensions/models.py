@@ -43,7 +43,7 @@ class EveContract(models.Model):
         ("CHARACTER", "CHARACTER"),
         ("CORPORATION", "CORPORATION")
     )
-    external_id = models.IntegerField()
+    external_id = models.BigIntegerField()
 
     issued_by = models.CharField(max_length=128)
     issued_to = models.CharField(max_length=128, null=True)
@@ -93,7 +93,7 @@ class EveJournalEntry(models.Model):
         ("CHARACTER", "CHARACTER"),
         ("CORPORATION", "CORPORATION")
     )
-    external_id = models.IntegerField()
+    external_id = models.BigIntegerField()
     type = models.CharField(max_length=128)
     value = models.FloatField()
     date = models.DateField()
@@ -110,7 +110,7 @@ class EveJournalEntry(models.Model):
 
 
 class EveTransaction(models.Model):
-    external_id=models.IntegerField()
+    external_id=models.BigIntegerField()
     item = models.CharField(max_length=64)
     client = models.CharField(max_length=128)
     client_id = models.IntegerField()
