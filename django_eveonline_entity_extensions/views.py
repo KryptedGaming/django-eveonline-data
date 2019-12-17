@@ -6,18 +6,22 @@ from django.views.generic import TemplateView
 from django_eveonline_connector.models import EveCharacter, EveEntity
 from django_eveonline_entity_extensions.models import EveAsset, EveClone, EveContact, EveContract, EveSkill, EveJournalEntry, EveTransaction
 from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.contrib.auth.decorators import login_required, permission_required
 from .tasks import update_eve_character_all
 from django.utils.html import escape
 
 # Character Views
 
-
+@login_required
+@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
 def view_character(request, external_id):
     context = {}
     context['character'] = EveCharacter.objects.get(external_id=external_id)
     return render(request, 'django_eveonline_entity_extensions/adminlte/view_character.html', context)
 
 
+@login_required
+@permission_required('django_eveonline_connector.change_evecharacter')
 def refresh_character(request, external_id):
     try:
         update_eve_character_all(external_id)
@@ -26,7 +30,9 @@ def refresh_character(request, external_id):
         messages.error(request, "Character was not updated: %s" % e)
     return redirect('django-eveonline-entity-extensions-view-character', external_id)
 
-
+@login_required
+@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
+@permission_required('django_eveonline_connector.view_eveasset', raise_exception=True)
 def view_character_assets(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -37,7 +43,9 @@ def view_character_assets(request, external_id):
         }
     )
 
-
+@login_required
+@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
+@permission_required('django_eveonline_connector.view_eveclone', raise_exception=True)
 def view_character_clones(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -48,7 +56,9 @@ def view_character_clones(request, external_id):
         }
     )
 
-
+@login_required
+@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
+@permission_required('django_eveonline_connector.view_evecontract', raise_exception=True)
 def view_character_contracts(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -59,7 +69,9 @@ def view_character_contracts(request, external_id):
         }
     )
 
-
+@login_required
+@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
+@permission_required('django_eveonline_connector.view_evecontact', raise_exception=True)
 def view_character_contacts(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -70,7 +82,9 @@ def view_character_contacts(request, external_id):
         }
     )
 
-
+@login_required
+@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
+@permission_required('django_eveonline_connector.view_eveskill', raise_exception=True)
 def view_character_skills(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     character_skills = EveSkill.objects.filter(entity=character)
@@ -86,7 +100,9 @@ def view_character_skills(request, external_id):
         }
     )
 
-
+@login_required
+@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
+@permission_required('django_eveonline_connector.view_evejournalentry', raise_exception=True)
 def view_character_journal(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -97,6 +113,9 @@ def view_character_journal(request, external_id):
         }
     )
 
+@login_required
+@permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
+@permission_required('django_eveonline_connector.view_evetransaction', raise_exception=True)
 def view_character_transactions(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
