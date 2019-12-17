@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 @receiver(post_save, sender=EveCharacter)
 def user_token_update(sender, **kwargs):
     def call():
-        print("hello")
         eve_character = kwargs.get('instance')
         if kwargs.get('created'):
             update_eve_character_all.apply_async(args=[eve_character.external_id])
