@@ -3,7 +3,7 @@ from django_eveonline_connector.models import EveEntity
 
 
 class EveAsset(models.Model):
-    item = models.CharField(max_length=64)
+    item = models.CharField(max_length=128)
     item_type = models.CharField(max_length=32)
     location = models.CharField(max_length=128)
     quantity = models.IntegerField()
@@ -111,7 +111,7 @@ class EveJournalEntry(models.Model):
 
 class EveTransaction(models.Model):
     external_id=models.BigIntegerField()
-    item = models.CharField(max_length=64)
+    item = models.CharField(max_length=128)
     client = models.CharField(max_length=128)
     client_id = models.IntegerField()
     client_type = models.CharField(max_length=32)
