@@ -32,7 +32,7 @@ def refresh_character(request, external_id):
 
 @login_required
 @permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
-@permission_required('django_eveonline_connector.view_eveasset', raise_exception=True)
+@permission_required('django_eveonline_entity_extensions.view_eveasset', raise_exception=True)
 def view_character_assets(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -45,7 +45,7 @@ def view_character_assets(request, external_id):
 
 @login_required
 @permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
-@permission_required('django_eveonline_connector.view_eveclone', raise_exception=True)
+@permission_required('django_eveonline_entity_extensions.view_eveclone', raise_exception=True)
 def view_character_clones(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -58,7 +58,7 @@ def view_character_clones(request, external_id):
 
 @login_required
 @permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
-@permission_required('django_eveonline_connector.view_evecontract', raise_exception=True)
+@permission_required('django_eveonline_entity_extensions.view_evecontract', raise_exception=True)
 def view_character_contracts(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -71,7 +71,7 @@ def view_character_contracts(request, external_id):
 
 @login_required
 @permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
-@permission_required('django_eveonline_connector.view_evecontact', raise_exception=True)
+@permission_required('django_eveonline_entity_extensions.view_evecontact', raise_exception=True)
 def view_character_contacts(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -84,7 +84,7 @@ def view_character_contacts(request, external_id):
 
 @login_required
 @permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
-@permission_required('django_eveonline_connector.view_eveskill', raise_exception=True)
+@permission_required('django_eveonline_entity_extensions.view_eveskill', raise_exception=True)
 def view_character_skills(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     character_skills = EveSkill.objects.filter(entity=character)
@@ -102,7 +102,7 @@ def view_character_skills(request, external_id):
 
 @login_required
 @permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
-@permission_required('django_eveonline_connector.view_evejournalentry', raise_exception=True)
+@permission_required('django_eveonline_entity_extensions.view_evejournalentry', raise_exception=True)
 def view_character_journal(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
@@ -115,7 +115,7 @@ def view_character_journal(request, external_id):
 
 @login_required
 @permission_required('django_eveonline_connector.view_evecharacter', raise_exception=True)
-@permission_required('django_eveonline_connector.view_evetransaction', raise_exception=True)
+@permission_required('django_eveonline_entity_extensions.view_evetransaction', raise_exception=True)
 def view_character_transactions(request, external_id):
     character = EveCharacter.objects.get(external_id=external_id)
     return render(
