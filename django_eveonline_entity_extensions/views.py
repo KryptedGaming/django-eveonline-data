@@ -143,6 +143,8 @@ def view_alliance(request, external_id):
     pass
 
 # JSON Responses
+@login_required
+@permission_required('django_eveonline_entity_extensions.view_eveasset', raise_exception=True)
 def get_assets(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
@@ -150,7 +152,8 @@ def get_assets(request):
         return HttpResponse(status=404)
     return AssetJson.as_view()(request)
 
-
+@login_required
+@permission_required('django_eveonline_entity_extensions.view_eveclone', raise_exception=True)
 def get_clones(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
@@ -159,6 +162,8 @@ def get_clones(request):
     return CloneJson.as_view()(request)
 
 
+@login_required
+@permission_required('django_eveonline_entity_extensions.view_evecontact', raise_exception=True)
 def get_contacts(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
@@ -167,6 +172,8 @@ def get_contacts(request):
     return ContactJson.as_view()(request)
 
 
+@login_required
+@permission_required('django_eveonline_entity_extensions.view_evecontracts', raise_exception=True)
 def get_contracts(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
@@ -174,7 +181,8 @@ def get_contracts(request):
         return HttpResponse(status=404)
     return ContractJson.as_view()(request)
 
-
+@login_required
+@permission_required('django_eveonline_entity_extensions.view_evejournal', raise_exception=True)
 def get_journal(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
@@ -182,6 +190,8 @@ def get_journal(request):
         return HttpResponse(status=404)
     return JournalJson.as_view()(request)
 
+@login_required
+@permission_required('django_eveonline_entity_extensions.view_evetransaction', raise_exception=True)
 def get_transactions(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
@@ -191,8 +201,6 @@ def get_transactions(request):
 
 
 # JSON Class Views
-
-
 class AssetJson(BaseDatatableView):
     model = EveAsset
     columns = ['item', 'location', 'quantity']
