@@ -173,7 +173,7 @@ def get_contacts(request):
 
 
 @login_required
-@permission_required('django_eveonline_entity_extensions.view_evecontracts', raise_exception=True)
+@permission_required('django_eveonline_entity_extensions.view_evecontract', raise_exception=True)
 def get_contracts(request):
     if 'external_id' not in request.GET:
         return HttpResponse(status=400)
