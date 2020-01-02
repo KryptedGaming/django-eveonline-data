@@ -1,6 +1,6 @@
 from celery import shared_task
 from django.utils.dateparse import parse_datetime
-from django_eveonline_connector.models import EveCharacter, EveCorporation, EveAlliance
+from django_eveonline_connector.models import EveCharacter, EveCorporation, EveAlliance, EveToken
 from django_eveonline_entity_extensions.models import EveAsset, EveClone, EveContact, EveContract, EveSkill, EveSkillPoints, EveNetWorth, EveJournalEntry, EveTransaction
 from django_eveonline_connector.services.esi.assets import get_eve_character_assets
 from django_eveonline_connector.services.esi.clones import get_eve_character_clones
@@ -119,6 +119,9 @@ def update_eve_character_all(character_id):
 
 @shared_task
 def update_eve_character_assets(character_id):
+    if not EveToken.objects.filter(evecharacter__external_id=character_id).exists():
+        logger.warning("Skipping token-required action for character %s" % character_id)
+        return 
     assets = get_eve_character_assets(character_id)
     # TODO: don't lazy delete
     EveAsset.objects.filter(entity__external_id=character_id).delete()
@@ -132,6 +135,9 @@ def update_eve_character_assets(character_id):
 
 @shared_task
 def update_eve_character_clones(character_id):
+    if not EveToken.objects.filter(evecharacter__external_id=character_id).exists():
+        logger.warning("Skipping token-required action for character %s" % character_id)
+        return 
     clones = get_eve_character_clones(character_id)
     # TODO: don't lazy delete
     EveClone.objects.filter(entity__external_id=character_id).delete()
@@ -144,6 +150,9 @@ def update_eve_character_clones(character_id):
 
 @shared_task
 def update_eve_character_contacts(character_id):
+    if not EveToken.objects.filter(evecharacter__external_id=character_id).exists():
+        logger.warning("Skipping token-required action for character %s" % character_id)
+        return 
     logger.info("Updating contacts for %s" % character_id)
     contacts = get_eve_character_contacts(character_id)
     # TODO: don't lazy delete
@@ -159,6 +168,9 @@ def update_eve_character_contacts(character_id):
 
 @shared_task
 def update_eve_character_contracts(character_id):
+    if not EveToken.objects.filter(evecharacter__external_id=character_id).exists():
+        logger.warning("Skipping token-required action for character %s" % character_id)
+        return 
     logger.info("Updating contracts for %s" % character_id)
     contracts = get_eve_character_contracts(character_id)
     # TODO: don't lazy delete
@@ -184,6 +196,9 @@ def update_eve_character_contracts(character_id):
 
 @shared_task
 def update_eve_character_skills(character_id):
+    if not EveToken.objects.filter(evecharacter__external_id=character_id).exists():
+        logger.warning("Skipping token-required action for character %s" % character_id)
+        return 
     logger.info("Updating skills for %s" % character_id)
     skills = get_eve_character_skills(character_id)
     entity = EveCharacter.objects.get(external_id=character_id)
@@ -206,6 +221,9 @@ def update_eve_character_skills(character_id):
 
 @shared_task
 def update_eve_character_journal(character_id):
+    if not EveToken.objects.filter(evecharacter__external_id=character_id).exists():
+        logger.warning("Skipping token-required action for character %s" % character_id)
+        return 
     logger.info("Updating journal entries for %s" % character_id)
     entity = EveCharacter.objects.get(external_id=character_id)
     # Get existing journal IDs
@@ -236,6 +254,9 @@ def update_eve_character_journal(character_id):
 
 @shared_task
 def update_eve_character_transactions(character_id):
+    if not EveToken.objects.filter(evecharacter__external_id=character_id).exists():
+        logger.warning("Skipping token-required action for character %s" % character_id)
+        return 
     logger.info("Updating transactions for %s" % character_id)
     entity = EveCharacter.objects.get(external_id=character_id)
     # get existing transaction ids 
