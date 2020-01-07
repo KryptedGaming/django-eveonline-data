@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load static %}
 
 {% block title %}
 EVE Online - View Character
@@ -39,12 +40,25 @@ EVE Online - View Character
                         src="https://imageserver.eveonline.com/Character/{{character.external_id}}_128.jpg"
                         alt="User profile picture">
                     <h3 class="profile-username text-center">{{character.name }}</h3>
-
-                    <h5 class="text-muted text-center">{{character.corporation}}</h5>
-                    <h6 class="text-muted text-center">{{character.corporation.alliance}}</h6>
+                    <h5 class="text-muted text-center">{{character.corporation}} </h5>
+                    <h6 class="text-muted text-center">{{character.corporation.alliance}} </h6>
                     <br>
 
                     <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <b>Links</b>
+                            <p class="pull-right">
+                                <a href="https://forums.eveonline.com/u/{{character.name}}/summary" target="_blank">
+                                    <img width="16x" src="{% static 'django_eveonline_entity_extensions/img/eve_forum_logo.ico'%}">
+                                </a>
+                                <a href="http://evewho.com/pilot/{{character.name}}" target="_blank">
+                                    <img width="16x" src="{% static 'django_eveonline_entity_extensions/img/evewho_logo.ico'%}">
+                                </a>
+                                <a href="https://zkillboard.com/character/{{character.name}}" target="_blank">
+                                    <img width="16x" src="{% static 'django_eveonline_entity_extensions/img/zkillboard_logo.ico'%}">
+                                </a>
+                            </p>
+                        </li>
                         <li class="list-group-item">
                             <b>Skill Points</b>
                             <p class="pull-right">
