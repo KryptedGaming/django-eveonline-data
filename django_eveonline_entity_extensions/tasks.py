@@ -126,6 +126,9 @@ def update_eve_character_assets(character_id):
     # TODO: don't lazy delete
     EveAsset.objects.filter(entity__external_id=character_id).delete()
     for asset in assets:
+        if 'location' not in asset:
+            asset['location'] = 'Unknown Location'
+            
         EveAsset(
             item=asset['item_name'],
             location=asset['location'],
